@@ -70,9 +70,9 @@ def createPdfTicket(ticketNumber):
         pdf.drawString(280,510,"Cena:")
         ticketPrice = str(ticketData[3])
         if len(ticketPrice.split('.')[1]) == 2:
-            ticketPrice += ' ,-'
+            ticketPrice += ' PLN'
         else:
-            ticketPrice += "0 ,-"
+            ticketPrice += "0 PLN"
         pdf.drawString(290,490,ticketPrice)
 
         #ticket discount
