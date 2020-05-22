@@ -9,3 +9,14 @@ Dostępne są proste mechaniki do tworzenia nowych biletów, sprawdzania ich sta
 
 Generowanie biletu w formie pdf:
 W rekordach z biletami, oraz przy tworzeniu nowego biletu, program utworzy plik w formacie pdf z jego numerem i odpowiadającym numerowi kodem kreskowym. W założeniu operator aplikacji przed wejściem skanuje kod kreskowy, lub wpisuje numer ręcznie aby sprawdzić autentyczność i oznaczyć skasowanie biletu w systemie.
+
+
+config.json {
+    Plik ustawień służący do ustawienia:
+    - nazwy firmy (Używana w stopce biletów pdf)
+    - dane do połączenia z serwerem baz danych takie jak:
+        - login
+        - hasło
+        - adres serwera
+        - nazwa bazy
+}

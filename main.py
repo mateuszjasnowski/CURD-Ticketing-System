@@ -348,8 +348,9 @@ def newTikectData(name,surname,event_name,discount,event_date):
   ticketBarcode += str(int.from_bytes(ticketBarcodeData.encode(), 'big'))
 
   fullname = str(name) + ' ' + str(surname)
-  ticketPrice = str(eventPrice * (1 - int(realDiscount) / 100))
-  if len(ticketPrice.split('.')[1]) == 2:
+  ticketPrice = round(float(eventPrice) * (1 - int(realDiscount) / 100),2)
+  ticketPrice = str(ticketPrice)
+  if len(str(ticketPrice).split('.')[1]) == 2:
     ticketPrice += ' zł'
   else:
     ticketPrice += "0 zł"

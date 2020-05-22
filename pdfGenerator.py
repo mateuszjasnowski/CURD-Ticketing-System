@@ -68,7 +68,8 @@ def createPdfTicket(ticketNumber):
 
         #Ticket Price
         pdf.drawString(280,510,"Cena:")
-        ticketPrice = str(ticketData[3])
+        ticketPrice = round(float(ticketData[3]),2)
+        ticketPrice = str(ticketPrice)
         if len(ticketPrice.split('.')[1]) == 2:
             ticketPrice += ' PLN'
         else:
