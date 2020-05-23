@@ -1,7 +1,7 @@
 {
     "companyName": "CURD_TICKET_SHOP", 
-    "dbUserName": "curd_bot",
-    "dbUserPasswd": "96y2YkmrmDbLEjkI",
+    "dbUserName": "root",
+    "dbUserPasswd": "",
     "dbName": "curd",
     "dbServer": "localhost"
 }
