@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:3306
--- Generation Time: May 22, 2020 at 05:16 PM
+-- Generation Time: May 23, 2020 at 09:51 AM
 -- Server version: 8.0.20-0ubuntu0.20.04.1
 -- PHP Version: 7.4.3
 
@@ -21,8 +21,6 @@ SET time_zone = "+00:00";
 --
 -- Database: `curd`
 --
-CREATE DATABASE IF NOT EXISTS `curd` DEFAULT CHARACTER SET utf8 COLLATE utf8_polish_ci;
-USE `curd`;
 
 -- --------------------------------------------------------
 
@@ -30,11 +28,27 @@ USE `curd`;
 -- Stand-in structure for view `daily_raport`
 -- (See below for the actual view)
 --
-DROP VIEW IF EXISTS `daily_raport`;
-CREATE TABLE IF NOT EXISTS `daily_raport` (
+CREATE TABLE `daily_raport` (
 `daily number of tickets` bigint
-,`summary price` double(22,2)
 ,`DATA` date
+,`summary price` double(22,2)
+);
+
+-- --------------------------------------------------------
+
+--
+-- Stand-in structure for view `daily_ticket_view`
+-- (See below for the actual view)
+--
+CREATE TABLE `daily_ticket_view` (
+`barcode` mediumtext
+,`date_of_sold` date
+,`day_of_valid` date
+,`discount` float
+,`first and last name` mediumtext
+,`movie_name` text
+,`ticket price` double(22,2)
+,`ticket_status` int
 );
 
 -- --------------------------------------------------------
@@ -43,13 +57,11 @@ CREATE TABLE IF NOT EXISTS `daily_raport` (
 -- Table structure for table `movie`
 --
 
-DROP TABLE IF EXISTS `movie`;
-CREATE TABLE IF NOT EXISTS `movie` (
-  `movie_id` int NOT NULL AUTO_INCREMENT,
+CREATE TABLE `movie` (
+  `movie_id` int NOT NULL,
   `movie_name` text CHARACTER SET utf8 COLLATE utf8_polish_ci NOT NULL,
-  `ticket_price` float NOT NULL DEFAULT '0',
-  PRIMARY KEY (`movie_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8 COLLATE=utf8_polish_ci;
+  `ticket_price` float NOT NULL DEFAULT '0'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_polish_ci;
 
 --
 -- Dumping data for table `movie`
@@ -72,8 +84,7 @@ INSERT INTO `movie` (`movie_id`, `movie_name`, `ticket_price`) VALUES
 -- Stand-in structure for view `overall_raport`
 -- (See below for the actual view)
 --
-DROP VIEW IF EXISTS `overall_raport`;
-CREATE TABLE IF NOT EXISTS `overall_raport` (
+CREATE TABLE `overall_raport` (
 `number of tickets` bigint
 ,`summary price` double(22,2)
 );
@@ -84,9 +95,8 @@ CREATE TABLE IF NOT EXISTS `overall_raport` (
 -- Table structure for table `ticket`
 --
 
-DROP TABLE IF EXISTS `ticket`;
-CREATE TABLE IF NOT EXISTS `ticket` (
-  `ticket_number` int NOT NULL AUTO_INCREMENT,
+CREATE TABLE `ticket` (
+  `ticket_number` int NOT NULL,
   `name` text CHARACTER SET utf8 COLLATE utf8_polish_ci NOT NULL,
   `surname` text CHARACTER SET utf8 COLLATE utf8_polish_ci NOT NULL,
   `movie_id` int NOT NULL,
@@ -94,9 +104,8 @@ CREATE TABLE IF NOT EXISTS `ticket` (
   `day_of_valid` date NOT NULL,
   `ticket_status` int NOT NULL DEFAULT '1',
   `date_of_sold` date NOT NULL,
-  `barcode` text CHARACTER SET utf8 COLLATE utf8_polish_ci,
-  PRIMARY KEY (`ticket_number`)
-) ENGINE=InnoDB AUTO_INCREMENT=32 DEFAULT CHARSET=utf8 COLLATE=utf8_polish_ci;
+  `barcode` text CHARACTER SET utf8 COLLATE utf8_polish_ci
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_polish_ci;
 
 --
 -- Dumping data for table `ticket`
@@ -117,7 +126,9 @@ INSERT INTO `ticket` (`ticket_number`, `name`, `surname`, `movie_id`, `discount`
 (28, 'Filomena', 'Gwóźdź', 5, 0, '2020-12-28', 1, '2020-05-22', '51593785865141577534227836673819468130140631602'),
 (29, 'Filip ', 'Kret', 8, 25, '2020-05-30', 1, '2020-05-22', '81530244129258895831729839497097778'),
 (30, 'Zuzanna ', 'Wiercik', 8, 30, '2020-05-30', 1, '2020-05-22', '829744661603732682928862894216513986572850'),
-(31, 'Karolina', 'Zaraza', 3, 0, '2020-06-01', 1, '2020-05-22', '3120136492333621561025470186750116442674');
+(31, 'Karolina', 'Zaraza', 3, 0, '2020-06-01', 1, '2020-05-22', '3120136492333621561025470186750116442674'),
+(32, 'Janina', 'Jeżyk', 1, 50, '2020-05-30', 1, '2020-05-22', '198891304237959542504598105628326310450'),
+(33, 'Anna ', 'Wiech', 3, 50, '2020-05-22', 0, '2020-05-22', '3453867512510308634712147034060436018');
 
 -- --------------------------------------------------------
 
@@ -125,15 +136,14 @@ INSERT INTO `ticket` (`ticket_number`, `name`, `surname`, `movie_id`, `discount`
 -- Stand-in structure for view `ticket_view`
 -- (See below for the actual view)
 --
-DROP VIEW IF EXISTS `ticket_view`;
-CREATE TABLE IF NOT EXISTS `ticket_view` (
+CREATE TABLE `ticket_view` (
 `barcode` mediumtext
+,`day_of_valid` date
+,`discount` float
 ,`first and last name` mediumtext
 ,`movie_name` text
 ,`ticket price` double(22,2)
-,`day_of_valid` date
 ,`ticket_status` int
-,`discount` float
 );
 
 -- --------------------------------------------------------
@@ -144,6 +154,15 @@ CREATE TABLE IF NOT EXISTS `ticket_view` (
 DROP TABLE IF EXISTS `daily_raport`;
 
 CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `daily_raport`  AS  select count(`ticket`.`ticket_number`) AS `daily number of tickets`,round(sum((`movie`.`ticket_price` * (1 - (`ticket`.`discount` / 100)))),2) AS `summary price`,curdate() AS `DATA` from (`ticket` join `movie` on((`movie`.`movie_id` = `ticket`.`movie_id`))) where (`ticket`.`date_of_sold` = curdate()) ;
+
+-- --------------------------------------------------------
+
+--
+-- Structure for view `daily_ticket_view`
+--
+DROP TABLE IF EXISTS `daily_ticket_view`;
+
+CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `daily_ticket_view`  AS  select concat(`ticket`.`ticket_number`,`ticket`.`barcode`) AS `barcode`,concat(`ticket`.`name`,' ',`ticket`.`surname`) AS `first and last name`,`movie`.`movie_name` AS `movie_name`,round((`movie`.`ticket_price` * (1 - (`ticket`.`discount` / 100))),2) AS `ticket price`,`ticket`.`day_of_valid` AS `day_of_valid`,`ticket`.`ticket_status` AS `ticket_status`,`ticket`.`discount` AS `discount`,`ticket`.`date_of_sold` AS `date_of_sold` from (`ticket` join `movie` on((`movie`.`movie_id` = `ticket`.`movie_id`))) where (`ticket`.`date_of_sold` = curdate()) ;
 
 -- --------------------------------------------------------
 
@@ -162,6 +181,38 @@ CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW 
 DROP TABLE IF EXISTS `ticket_view`;
 
 CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `ticket_view`  AS  select concat(`ticket`.`ticket_number`,`ticket`.`barcode`) AS `barcode`,concat(`ticket`.`name`,' ',`ticket`.`surname`) AS `first and last name`,`movie`.`movie_name` AS `movie_name`,round((`movie`.`ticket_price` * (1 - (`ticket`.`discount` / 100))),2) AS `ticket price`,`ticket`.`day_of_valid` AS `day_of_valid`,`ticket`.`ticket_status` AS `ticket_status`,`ticket`.`discount` AS `discount` from (`ticket` join `movie` on((`movie`.`movie_id` = `ticket`.`movie_id`))) ;
+
+--
+-- Indexes for dumped tables
+--
+
+--
+-- Indexes for table `movie`
+--
+ALTER TABLE `movie`
+  ADD PRIMARY KEY (`movie_id`);
+
+--
+-- Indexes for table `ticket`
+--
+ALTER TABLE `ticket`
+  ADD PRIMARY KEY (`ticket_number`);
+
+--
+-- AUTO_INCREMENT for dumped tables
+--
+
+--
+-- AUTO_INCREMENT for table `movie`
+--
+ALTER TABLE `movie`
+  MODIFY `movie_id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+
+--
+-- AUTO_INCREMENT for table `ticket`
+--
+ALTER TABLE `ticket`
+  MODIFY `ticket_number` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=34;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

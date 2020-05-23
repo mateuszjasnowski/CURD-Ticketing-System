@@ -111,10 +111,10 @@ def dailyRaport(): #table raport READ & DELETE datas
     dailySummarySum = tk.Label(window, text=dailySum)
     dailySummarySum.grid(row=1, column=4)
 
-    label1 = tk.Label(window, text="Wszystkie bilety:")
+    label1 = tk.Label(window, text="Wszystkie sprzedane dziś bilety:")
     label1.grid(row=2, column=1, columnspan=5)
 
-    notChecketTickets = dbCon.dataSelect('ticket_view',"WHERE ticket_status = 0")
+    notChecketTickets = dbCon.dataSelect('daily_ticket_view',"")
 
     cols = ('Numer biletu','Imię i Nazwisko','Spektakl','Cena','Data ważności','Status')
 
