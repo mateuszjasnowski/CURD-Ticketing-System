@@ -41,7 +41,7 @@ def createPdfTicket(ticketNumber):
         selectQuerry='WHERE barcode = '+str(ticketNumber)
         ticketData = dbCon.dataSelect('ticket_view',selectQuerry)[0]
 
-        pdf = canvas.Canvas('tickets/'+pdfName)
+        pdf = canvas.Canvas('tickets/'+pdfName+'.pdf')
         pdf.setTitle(pdfName)
 
         pdf.drawImage('.temp/tempBarcode.png',300,720,anchorAtXY=True,width=310,height=90)
@@ -95,4 +95,4 @@ def createPdfTicket(ticketNumber):
 
         os.remove('.temp/tempBarcode.png')
         os.rmdir('.temp')
-        webbrowser.open_new(r'file://'+os.path.realpath('tickets/'+pdfName+'.pdf))
+        webbrowser.open_new(r'file://'+os.path.realpath('tickets/'+pdfName+'.pdf'))
