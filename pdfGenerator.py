@@ -96,3 +96,4 @@ def createPdfTicket(ticketNumber):
         os.remove('.temp/tempBarcode.png')
         os.rmdir('.temp')
         webbrowser.open_new(r'file://'+os.path.realpath('tickets/'+pdfName+'.pdf'))
+
