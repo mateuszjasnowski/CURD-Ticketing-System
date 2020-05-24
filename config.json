@@ -1,7 +1,7 @@
 {
   "companyName": "CURD_TICKET_SHOP",
   "dbUserName": "root",
-  "dbUserPasswd": "L0mTjjz",
+  "dbUserPasswd": "",
   "dbName": "curd",
-  "dbServer": "192.168.0.150"
+  "dbServer": "localhost"
 }
