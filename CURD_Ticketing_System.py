@@ -692,6 +692,7 @@ def dataDiffrence(ticket_id,name,surname,movie_name,discountFull,day_of_vaild,ti
 
 def insertDiffrence(ticket_id,oldData,newData):
   columnsNames = ['name','surname','movie_id','movie_name','discount','day_of_valid','ticket_status','ticket_status_name','barcode']
+
   try:
     for i in range(len(columnsNames)):
       if oldData[i] != newData[i]:
@@ -705,7 +706,8 @@ def insertDiffrence(ticket_id,oldData,newData):
             dbCon.dataUpdate('ticket','ticket_number',str(ticket_id),str(columnsNames[i]),str(newData[i]))
             returnText = 'Pomyślnie wprowadzono zmiany'
 
-            pdfGenerator.createPdfTicket(newData[8])
+            ticket_number = str(ticket_id)+str(newData[8])
+    pdfGenerator.createPdfTicket(ticket_number)
   except:
     returnText = 'Wystąpił błąd ;('
   finally:

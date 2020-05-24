@@ -20,3 +20,9 @@ config.json {
         - adres serwera
         - nazwa bazy
 }
+
+PROJECT VISUAL STUDIO może wymagać zainstalowania dodatkowych pakietów takich jak :
+- reportlab
+- python-barcode
+- tkcalendar
+- mysql.connector
