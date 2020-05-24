@@ -979,7 +979,7 @@ def insertEventData(name,price):
 window = tk.Tk()
 window.minsize(500,400)
 window.title('System biletowy "CURD"')
-
+window.iconbitmap('tickets.ico')
 startMenu()
 
 window.mainloop()
