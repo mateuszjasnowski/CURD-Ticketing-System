@@ -153,6 +153,18 @@ def dailyRaport(): #table raport READ & DELETE datas
 
 #ticket data
 def ticketNumberInput(): #input form to read data
+  def ticketNumberInputEntryCheck(ticketNumber):
+    if ticketNumber.get() == "":
+      messagebox.showwarning(title='Błąd wprowadzonych danych', message="Numer biletu jest pusty")
+    else:
+      try:
+        ticketNumberCheck = int(ticketNumber)
+        ticketNumberInputGetData(ticketNumber)
+      except:
+        messagebox.showwarning(title='Błąd wprowadzonych danych', message="Podany numer biletu zawiera nie dozwolone znaki")
+      finally:
+        pass
+
   clear()
 
   titleLabel = tk.Label(window, text='Podaj numer biletu: ', font='Helvetica 18 bold')
@@ -162,7 +174,7 @@ def ticketNumberInput(): #input form to read data
   ticketNumber.grid(row=2,column=0,sticky="NEWS", padx=5, pady=5,columnspan=3)
 
 
-  ticketSubmit = tk.Button(window, text="Sprawdź",command=lambda:ticketNumberInputGetData(ticketNumber))
+  ticketSubmit = tk.Button(window, text="Sprawdź",command=lambda:ticketNumberInputEntryCheck(ticketNumber))
   ticketSubmit.grid(row=2,column=3,sticky="NEWS", padx=5, pady=5)
 
   backButton = tk.Button(window, text='Wróć', command=startMenu)
@@ -273,6 +285,26 @@ def ticketCheck(ticketData): #return message after function
 
 #create ticket
 def ticketCreation():
+  def newTicketEntryCheck(nameInput,surnameInput,eventsVar,discountVar,dateOfvaild):
+    if nameInput.get() != "":
+      if surnameInput.get() != "":
+        if eventsVar.get() == "":
+          messagebox.showwarning(title='Błąd wprowadzonych danych', message="Nazwa wydarzenia nie jest wybrana")
+        elif discountVar.get() == "":
+          messagebox.showwarning(title='Błąd wprowadzonych danych', message="Zniżka nie została wybrana")
+        elif dateOfvaild.selection_get() == "":
+          messagebox.showwarning(title='Błąd wprowadzonych danych', message="Data nie jest wybrana")
+        else:
+          now = datetime.datetime.now().date()
+          if dateOfvaild.selection_get() < now:
+            messagebox.showwarning(title='Błąd wprowadzonych danych', message="Wybrana data jest już przeszłością")
+          else:
+            newTikectData(nameInput,surnameInput,eventsVar,discountVar,dateOfvaild)
+      else:
+        messagebox.showwarning(title='Błąd wprowadzonych danych', message="Nazwisko nie może być puste")    
+    else:
+      messagebox.showwarning(title='Błąd wprowadzonych danych', message="Imię nie może być puste")
+  
   clear()
   titleLabel = tk.Label(window,text='Utwórz nowy bilet',font='Helvetica 18 bold')
   titleLabel.grid(row=0,column=0,sticky="NEWS", padx=5, pady=5,columnspan=2)
@@ -324,7 +356,7 @@ def ticketCreation():
   backButton = tk.Button(window, text='Wróć', command=startMenu)
   backButton.grid(row=4,column=0)
 
-  submitButton = tk.Button(window, text='Zatwierdź', command=lambda: newTikectData(nameInput,surnameInput,eventsVar,discountVar,dateOfvaild))
+  submitButton = tk.Button(window, text='Zatwierdź', command=lambda: newTicketEntryCheck(nameInput,surnameInput,eventsVar,discountVar,dateOfvaild))
   submitButton.grid(row=4,column=1)
 
 def newTikectData(name,surname,event_name,discount,event_date):
@@ -497,6 +529,28 @@ def allTickets(): #table raport READ & DELETE datas
 
 #edit menu
 def editData(barcode):
+  def editDataCheck(ticketID,nameInput,surnameInput,eventsVar,discountVar,dateOfvaild,ticketStatusVar):
+    if nameInput.get() != "":
+      if surnameInput.get() != "":
+        if eventsVar.get() == "":
+          messagebox.showwarning(title='Błąd wprowadzonych danych', message="Nazwa wydarzenia nie jest wybrana")
+        elif discountVar.get() == "":
+          messagebox.showwarning(title='Błąd wprowadzonych danych', message="Zniżka nie została wybrana")
+        elif dateOfvaild.selection_get() == "":
+          messagebox.showwarning(title='Błąd wprowadzonych danych', message="Data nie jest wybrana")
+        else:
+          now = datetime.datetime.now().date()
+          if dateOfvaild.selection_get() < now:
+            messagebox.showwarning(title='Błąd wprowadzonych danych', message="Wybrana data jest już przeszłością")
+          elif ticketStatusVar.get() == "":
+            messagebox.showwarning(title='Błąd wprowadzonych danych', message="Status biletu nie został podany")
+          else:
+            dataDiffrence(ticketID,nameInput,surnameInput,eventsVar,discountVar,dateOfvaild,ticketStatusVar)
+      else:
+        messagebox.showwarning(title='Błąd wprowadzonych danych', message="Nazwisko nie może być puste")    
+    else:
+      messagebox.showwarning(title='Błąd wprowadzonych danych', message="Imię nie może być puste")
+
   ticketID = barcodeToTicket(barcode)
   selectQuerry = 'WHERE ticket_number = ' + ticketID
   currentData = dbCon.dataSelect('ticket',selectQuerry)[0]
@@ -599,7 +653,7 @@ def editData(barcode):
   delButton.pack(side='left',padx=10,pady=5)
   showPdfTicket = tk.Button(buttonHolder,text='Pokaż bilet pdf',foreground='gray',command=lambda: pdfGenerator.createPdfTicket(barcode))
   showPdfTicket.pack(side='left',padx=10,pady=5)
-  submitButton = tk.Button(buttonHolder, text='Zapisz zmiany',foreground='gray', command=lambda: dataDiffrence(ticketID,nameInput,surnameInput,eventsVar,discountVar,dateOfvaild,ticketStatusVar))
+  submitButton = tk.Button(buttonHolder, text='Zapisz zmiany',foreground='gray', command=lambda: editDataCheck(ticketID,nameInput,surnameInput,eventsVar,discountVar,dateOfvaild,ticketStatusVar))
   submitButton.pack(side='left',padx=10,pady=5)
 
 def deleteTicket(ticket_id):
@@ -770,6 +824,22 @@ def eventList():
   createNewButton.grid(row=0,column=1,pady=5,padx=5)
 
 def editEventData(event_id):
+  def editEventDataCheck(event_id,NameText,priceText):
+    if NameText.get() == "":
+      messagebox.showwarning(title='Błąd wprowadzonych danych', message="Nazwa wydarzenia nie może być pusta")
+      editEventData(event_id)
+    elif priceText.get() == "":
+      messagebox.showwarning(title='Błąd wprowadzonych danych', message="Cena nie może być pusta")
+      editEventData(event_id)
+    else:
+      try:
+        priceValue = float(priceText.get())
+        eventDataDiffrence(event_id,NameText,priceText)
+      except:
+        messagebox.showwarning(title='Błąd wprowadzonych danych', message="Cena musi być liczbą")
+        editEventData(event_id)
+      finally:
+        pass
   selectQuerry = 'WHERE movie_id = ' + event_id
   currentData = dbCon.dataSelect('movie',selectQuerry)[0]
   name = currentData[1]
@@ -801,7 +871,7 @@ def editEventData(event_id):
   backButton.pack(side='left',padx=10,pady=5)
   delButton = tk.Button(buttonHolder,text='Usuń',foreground='red',command=lambda: deleteEvent(event_id))
   delButton.pack(side='left',padx=10,pady=5)
-  submitButton = tk.Button(buttonHolder, text='Zapisz zmiany',foreground='gray', command=lambda: eventDataDiffrence(event_id,NameText,priceText))
+  submitButton = tk.Button(buttonHolder, text='Zapisz zmiany',foreground='gray', command=lambda: editEventDataCheck(event_id,NameText,priceText))
   submitButton.pack(side='left',padx=10,pady=5)
 
 def eventDataDiffrence(eventID,newName,newPrice):
@@ -895,6 +965,19 @@ def deleteEvent(event_id):
 
 #event crating
 def crateNewEvent():
+  def crateNewEventCheck(nameText,priceText):
+    if nameText.get() == "":
+      messagebox.showwarning(title='Błąd wprowadzonych danych', message="Nazwa wydarzenia nie może być pusta")
+    elif priceText.get() == "":
+      messagebox.showwarning(title='Błąd wprowadzonych danych', message="Cena nie może być pusta")
+    else:
+      try:
+        priceValue = float(priceText.get())
+        newEventCheck(nameText,priceText)
+      except:
+        messagebox.showwarning(title='Błąd wprowadzonych danych', message="Cena musi być liczbą")
+      finally:
+        pass
   clear()
 
   titleText = 'Utwórz nowe wydarzenie:'
@@ -918,7 +1001,7 @@ def crateNewEvent():
 
   backButton = tk.Button(buttonHolder, text='Wróć', command=eventList, foreground='gray')
   backButton.pack(side='left',padx=10,pady=5)
-  submitButton = tk.Button(buttonHolder, text='Zapisz zmiany',foreground='gray', command=lambda: newEventCheck(nameText,priceText))
+  submitButton = tk.Button(buttonHolder, text='Zapisz zmiany',foreground='gray', command=lambda: crateNewEventCheck(nameText,priceText))
   submitButton.pack(side='left',padx=10,pady=5)
 
 def newEventCheck(name,price):
@@ -981,7 +1064,11 @@ def insertEventData(name,price):
 window = tk.Tk()
 window.minsize(500,400)
 window.title('System biletowy "CURD"')
-window.iconbitmap('tickets.ico')
+try:
+  window.wm_iconbitmap('tickets.ico')
+  window.iconbitmap('tickets.ico')
+except:
+  pass
 startMenu()
 
 window.mainloop()
